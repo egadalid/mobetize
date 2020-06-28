@@ -29,6 +29,10 @@
     {
       "name": "Product",
       "description": "Product information api"
+    },
+    {
+      "name": "Vault",
+      "description": "Vault api"
     }
   ],
   "paths": {
@@ -80,7 +84,7 @@
         "tags": [
           "Registration"
         ],
-        "description": "Validate phone number. An account will be created associated with the phone number.",
+        "description": "Validate phone number by providing the verification code. An account will be created associated with the phone number.",
         "operationId": "validatePhoneNumber",
         "parameters": [
           {
@@ -99,7 +103,12 @@
             "description": "Validation Code",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Registration"
+              "type": "object",
+              "properties": {
+                "validationCode": {
+                  "type": "string"
+                }
+              }
             }
           }
         ],
@@ -137,6 +146,11 @@
               "items": {
                 "$ref": "#/definitions/Product"
               }
+            },
+            "headers": {
+              "X-Process-Id": {
+                "type": "string"
+              }
             }
           }
         },
@@ -147,6 +161,157 @@
         }
       }
     },
+    "/product/offers": {
+      "get": {
+        "tags": [
+          "Product"
+        ],
+        "description": "Get banking products offers.",
+        "operationId": "getProductOffers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Array of products",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Product"
+              }
+            },
+            "headers": {
+              "X-Process-Id": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "summary": "Get product offers",
+        "externalDocs": {
+          "description": "Wireframe page",
+          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/ff3a5700-5611-4608-acea-b9e8ea6422cd/All-users-73"
+        }
+      }
+    },
+    "/vault/list": {
+      "get": {
+        "tags": [
+          "Vault"
+        ],
+        "description": "Get user products in vault.",
+        "operationId": "getProductsInVault",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Array of products in vault",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VaultProduct"
+              }
+            },
+            "headers": {
+              "X-Process-Id": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "summary": "Get user vault containing products",
+        "externalDocs": {
+          "description": "Wireframe page",
+          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/6ba7f4c8-14fc-42be-8d7b-3247704d6e4e/All-users-72"
+        }
+      }
+    },
+    "/vault/product": {
+      "post": {
+        "tags": [
+          "Vault"
+        ],
+        "description": "Add product in vault.",
+        "operationId": "addProductInVault",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Success"
+          }
+        },
+        "summary": "Add product in user vault",
+        "externalDocs": {
+          "description": "Wireframe page (add to vault button)",
+          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-71"
+        }
+      }
+    },
+    "/vault/product/{id}": {
+      "get": {
+        "tags": [
+          "Vault"
+        ],
+        "description": "Update product in vault.",
+        "operationId": "updateProductInVault",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Vault product id.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/definitions/VaultProduct"
+          }
+        },
+        "summary": "Get product in user vault",
+        "externalDocs": {
+          "description": "Wireframe page",
+          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-71"
+        }
+      },
+      "put": {
+        "tags": [
+          "Vault"
+        ],
+        "description": "Update product in vault.",
+        "operationId": "updateProductInVault",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Vault product id.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/VaultProduct"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Success"
+          }
+        },
+        "summary": "Update product in user vault",
+        "externalDocs": {
+          "description": "Wireframe page",
+          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-71"
+        }
+      }
+    },
     "/product/{productId}": {
       "get": {
         "tags": [
@@ -154,14 +319,16 @@
         ],
         "description": "Get banking products available.",
         "operationId": "getProduct",
-        "parameters": [{
-          "name": "productId",
-          "in": "path",
-          "description": "Product id.",
-          "required": true,
-          "type": "integer",
-          "format": "int32"
-        }],
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "Product id.",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
         "responses": {
           "200": {
             "$ref": "#/definitions/ProductDetail"
@@ -203,7 +370,7 @@
           }
         ],
         "responses": {
-          "200": {            
+          "200": {
             "$ref": "#/responses/Success"
           }
         },
@@ -217,7 +384,7 @@
     "/application": {
       "post": {
         "tags": [
-          "application"
+          "Application"
         ],
         "summary": "Add a new application",
         "operationId": "addApplication",
@@ -328,7 +495,7 @@
       }
     },
     "/user/{id}/password": {
-      "post": {
+      "put": {
         "tags": [
           "User"
         ],
@@ -365,8 +532,51 @@
         }
       }
     },
-    "/user/{id}/confirm": {
+    "/user/register": {
       "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "New registration",
+        "operationId": "registerUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Registration info",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "phoneNumber": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Success"
+          }
+        },
+        "externalDocs": {
+          "description": "Wireframe page",
+          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/773fddfe-c698-4345-b6c7-9b096df332a7/All-users-67"
+        }
+      }
+    },
+    "/user/{id}/confirm": {
+      "put": {
         "tags": [
           "User"
         ],
@@ -473,21 +683,39 @@
         }
       }
     },
-    "/user/{username}": {
+    "/user/{id}/apply": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Logs out current logged in User session",
+        "operationId": "logoutUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "$ref": "#/definitions/User"
+          }
+        }
+      }
+    },
+    "/user/{id}": {
       "get": {
         "tags": [
           "User"
         ],
-        "summary": "Get User by User name",
-        "operationId": "getUserByName",
+        "summary": "Get User",
+        "operationId": "getUserById",
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
-            "name": "username",
+            "name": "id",
             "in": "path",
-            "description": "The name that needs to be fetched. Use user1 for testing.",
+            "description": "The user id.",
             "required": true,
             "type": "string"
           }
@@ -511,7 +739,7 @@
         "tags": [
           "User"
         ],
-        "summary": "Updated User",
+        "summary": "Update user",
         "description": "This can only be done by the logged in User.",
         "operationId": "updateUser",
         "produces": [
@@ -519,9 +747,9 @@
         ],
         "parameters": [
           {
-            "name": "username",
+            "name": "id",
             "in": "path",
-            "description": "name that need to be updated",
+            "description": "User that need to be updated",
             "required": true,
             "type": "string"
           },
@@ -538,34 +766,6 @@
         "responses": {
           "400": {
             "description": "Invalid User supplied"
-          },
-          "404": {
-            "description": "User not found"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Delete User",
-        "description": "This can only be done by the logged in User.",
-        "operationId": "deleteUser",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "description": "The name that needs to be deleted",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Invalid username supplied"
           },
           "404": {
             "description": "User not found"
@@ -641,7 +841,7 @@
         }
       },
       "example": {
-        "registrationId": "e2e33ac5-ff77-4d5c-8932-85f1903fb7f2"
+        "validationCode": "e2e33ac5-ff77-4d5c-8932-85f1903fb7f2"
       }
     },
     "Credential": {
@@ -655,7 +855,8 @@
         }
       },
       "example": {
-        "registrationId": "e2e33ac5-ff77-4d5c-8932-85f1903fb7f2"
+        "email": "egadalid@mobetize.com",
+        "password": "Mob3t1z3!"
       }
     },
     "Confirmation": {
@@ -733,11 +934,11 @@
         },
         "firstName": {
           "type": "string",
-          "example": "Edwin"
+          "example": "John"
         },
         "lastName": {
           "type": "string",
-          "example": "Adalid"
+          "example": "Wick"
         },
         "email": {
           "type": "string",
@@ -746,6 +947,10 @@
         "phone": {
           "type": "string",
           "example": "7788773701"
+        },
+        "applicantId": {
+          "type": "integer",
+          "example": "1234567890"
         },
         "userStatus": {
           "type": "integer",
@@ -775,25 +980,6 @@
         "name": {
           "type": "string",
           "example": "doggie"
-        },
-        "photoUrls": {
-          "type": "array",
-          "xml": {
-            "name": "photoUrl",
-            "wrapped": true
-          },
-          "items": {
-            "type": "string"
-          }
-        },
-        "status": {
-          "type": "string",
-          "description": "Application status in the store",
-          "enum": [
-            "available",
-            "pending",
-            "sold"
-          ]
         }
       }
     },
@@ -812,23 +998,65 @@
           "format": "int32"
         }
       },
-      "example":{
+      "example": {
+        "productId": 9,
+        "name": "Personal Savings",
+        "parentId": 1
+      }
+    },
+    "VaultProduct": {
+      "type": "object",
+      "properties": {
+        "vaultProductId": {
+          "type": "string"
+        },
+        "product": {
+          "$ref": "#/definitions/Product"
+        }
+      },
+      "example": {
+        "productId": 9,
+        "name": "Personal Savings",
+        "parentId": 1
+      }
+    },
+    "Vault": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "products": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VaultProduct"
+          }
+        },
+        "parentId": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "example": {
         "productId": 9,
         "name": "Personal Savings",
         "parentId": 1
       }
     },
     "ProductDetail": {
-      "allOf": [{
-        "$ref": "#/definitions/Product"
-      },{
-        "type": "object",
-        "properties": {
-          "description": {
-            "type": "string"
+      "allOf": [
+        {
+          "$ref": "#/definitions/Product"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string"
+            }
           }
         }
-      }]
+      ]
     },
     "ApiResponse": {
       "type": "object",
