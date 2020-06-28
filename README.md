@@ -6,6 +6,8 @@ https://chrome.google.com/webstore/detail/swagger-viewer/nfmkaonpdmaglhjjlggfhln
 
 Swagger viewer icon should be shown in the top right corner of chrome.
 
+If swagger viewer icon is not shown on the top right of chrome, enter url chrome://extensions/ in chrome. Find swagger-viewer. There is a slider in the box to turn it on and the icon would show (SW) on the top right of chrome.
+
 Open smartOpen.json in github.
 https://github.com/egadalid/mobetize/blob/master/smartOpen.json
 
