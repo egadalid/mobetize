@@ -15,8 +15,8 @@
   },
   "tags": [
     {
-      "name": "Registration",
-      "description": "Registration process",
+      "name": "Co-Applicant",
+      "description": "Co-Applicant registration process",
       "externalDocs": {
         "description": "Find out more",
         "url": "https://drive.google.com/file/d/1LaTiSLVEwyX7AfYKZ-MJFbE5I-xL56T_/view?usp=sharing"
@@ -24,7 +24,7 @@
     },
     {
       "name": "User",
-      "description": "Operations for User"
+      "description": "Operations for smartOpen user."
     },
     {
       "name": "Product",
@@ -43,7 +43,7 @@
     "/phone/{phoneNumber}/register": {
       "post": {
         "tags": [
-          "Registration"
+          "Co-Applicant"
         ],
         "description": "Validate phone number. A code will be sent to the phone number.",
         "operationId": "registerPhoneNumber",
@@ -86,7 +86,7 @@
     "/phone/{phoneNumber}/verify": {
       "get": {
         "tags": [
-          "Registration"
+          "Co-Applicant"
         ],
         "description": "Validate phone number by providing the verification code. An account will be created associated with the phone number.",
         "operationId": "validatePhoneNumber",
@@ -348,7 +348,7 @@
     "/phone/{phoneNumber}/resend": {
       "post": {
         "tags": [
-          "Registration"
+          "Co-Applicant"
         ],
         "description": "Resend validation code to phone number.",
         "operationId": "resendPhoneCode",
@@ -924,9 +924,6 @@
           "type": "boolean",
           "default": false
         }
-      },
-      "xml": {
-        "name": "Order"
       }
     },
     "Category": {
@@ -939,9 +936,6 @@
         "name": {
           "type": "string"
         }
-      },
-      "xml": {
-        "name": "Category"
       }
     },
     "User": {
@@ -949,7 +943,8 @@
       "properties": {
         "id": {
           "type": "string",
-          "example": "97e64ab0-8970-4eba-a5fd-8599af126761"
+          "example": "97e64ab0-8970-4eba-a5fd-8599af126761",
+          "format": "uuid"
         },
         "username": {
           "type": "string"
@@ -964,7 +959,8 @@
         },
         "email": {
           "type": "string",
-          "example": "egadalid@mobetize.com"
+          "example": "egadalid@mobetize.com",
+          "format": "email"
         },
         "phone": {
           "type": "string",
@@ -984,9 +980,6 @@
           "description": "User Status",
           "example": 1
         }
-      },
-      "xml": {
-        "name": "User"
       }
     },
     "Membership": {
