@@ -37,9 +37,93 @@
     {
       "name": "Application",
       "description": "User applications"
+    },
+    {
+      "name": "Password",
+      "description": "User password api"
     }
   ],
   "paths": {
+    "/password/forgot": {
+      "post": {
+        "tags": [
+          "Password"
+        ],
+        "description": "Initiate forgot password process.",
+        "operationId": "forgotPassword",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Send email or phone number.",
+            "required": true,
+            "schema":{
+                "type": "object",
+                "properties": {
+                  "email":{
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "phoneNumber":{
+                    "type": "integer"
+                  }
+                }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Success"
+          },
+          "400": {
+            "$ref": "#/responses/Error"
+          }
+        },
+        "summary": "Initial registration using phone",
+        "externalDocs": {
+          "description": "Wireframe page",
+          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/c867e2c2-03e0-4c92-95d7-aa5659a4c792/All-users-192"
+        }
+      }
+    },
+      "/password/verify": {
+        "post": {
+          "tags": [
+            "Password"
+          ],
+          "description": "Verify forgot password verification code.",
+          "operationId": "passwordVerify",
+          "parameters": [
+            {
+              "name": "body",
+              "in": "body",
+              "description": "Verification code.",
+              "required": true,
+              "schema":{
+                  "type": "object",
+                  "properties": {
+                    "verificationCode":{
+                      "type": "string"
+                    }
+                  }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "$ref": "#/responses/Success"
+            },
+            "400": {
+              "$ref": "#/responses/Error"
+            }
+          },
+          "summary": "Initial registration using phone",
+          "externalDocs": {
+            "description": "Wireframe page",
+            "url": "https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/99546dc6-54c4-4d3b-89a0-62439ff98854/All-users-109"
+          }
+        }
+      },
     "/phone/{phoneNumber}/register": {
       "post": {
         "tags": [
@@ -532,7 +616,7 @@
         },
         "externalDocs": {
           "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/c867e2c2-03e0-4c92-95d7-aa5659a4c792/All-users-194"
+          "url": "https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/9794686e-9cce-45ac-b0d9-dacf9f40d91a/All-users-110"
         }
       }
     },
@@ -559,7 +643,8 @@
                   "type": "string"
                 },
                 "email": {
-                  "type": "string"
+                  "type": "string",
+                  "format": "email"
                 },
                 "phoneNumber": {
                   "type": "integer"
@@ -575,7 +660,7 @@
         },
         "externalDocs": {
           "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/773fddfe-c698-4345-b6c7-9b096df332a7/All-users-67"
+          "url": "https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/a71469ec-1b66-470e-b0b2-d2c38ad39283/All-users-52"
         }
       }
     },
@@ -665,7 +750,7 @@
         },
         "externalDocs": {
           "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/d6bee184-49a1-4e87-8a1c-14abb0a932db/All-users-64"
+          "url": "https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/921119e7-e039-4912-ba8f-8d7c1d3c5774/All-users-51"
         }
       }
     },
