@@ -1,0 +1,682 @@
+{
+  "components": {
+    "schemas": {
+      "RegisterConfirmReq": {
+        "type": "object",
+        "required": [
+          "accountId",
+          "otp"
+        ],
+        "properties": {
+          "accountId": {
+            "minLength": 0,
+            "type": "string",
+            "maxLength": 64
+          },
+          "otp": {
+            "minLength": 0,
+            "type": "string",
+            "maxLength": 10
+          }
+        }
+      },
+      "SetpasswordResp": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SetpasswordReq": {
+        "type": "object",
+        "required": [
+          "newPassword",
+          "oldPassword"
+        ],
+        "properties": {
+          "oldPassword": {
+            "minLength": 0,
+            "type": "string",
+            "maxLength": 64
+          },
+          "newPassword": {
+            "minLength": 0,
+            "type": "string",
+            "maxLength": 64
+          }
+        }
+      },
+      "Passwordcriteria": {
+        "type": "object",
+        "properties": {
+          "regex": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "RecoverpasswordSetpasswordResp": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          }
+        }
+      },
+      "ExistingResp": {
+        "type": "object",
+        "properties": {
+          "credentialType": {
+            "type": "string"
+          },
+          "existing": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RecoverpasswordRequestReq": {
+        "type": "object",
+        "required": [
+          "credential"
+        ],
+        "properties": {
+          "credential": {
+            "minLength": 0,
+            "type": "string",
+            "maxLength": 64
+          }
+        }
+      },
+      "AccountDeleteResp": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "LoginResp": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "TermconditionConfirmResp": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ExistingReq": {
+        "type": "object",
+        "required": [
+          "credential"
+        ],
+        "properties": {
+          "credential": {
+            "minLength": 0,
+            "type": "string",
+            "maxLength": 64
+          }
+        }
+      },
+      "RecoverpasswordSetpasswordReq": {
+        "type": "object",
+        "required": [
+          "credential",
+          "newPassword",
+          "otp"
+        ],
+        "properties": {
+          "credential": {
+            "minLength": 0,
+            "type": "string",
+            "maxLength": 64
+          },
+          "newPassword": {
+            "minLength": 0,
+            "type": "string",
+            "maxLength": 64
+          },
+          "otp": {
+            "minLength": 0,
+            "type": "string",
+            "maxLength": 10
+          }
+        }
+      },
+      "RegisterRequestReq": {
+        "type": "object",
+        "required": [
+          "email",
+          "msisdn",
+          "otpTo"
+        ],
+        "properties": {
+          "otpTo": {
+            "minLength": 0,
+            "type": "string",
+            "maxLength": 20
+          },
+          "msisdn": {
+            "minLength": 0,
+            "type": "string",
+            "maxLength": 20
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "RegisterConfirmResp": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "TermconditionConfirmReq": {
+        "type": "object",
+        "required": [
+          "confirm"
+        ],
+        "properties": {
+          "confirm": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RecoverpasswordRequestResp": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "string"
+          }
+        }
+      },
+      "PasswordcriteriaResp": {
+        "type": "object",
+        "properties": {
+          "passwordCriteria": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Passwordcriteria"
+            }
+          }
+        }
+      },
+      "RegisterRequestResp": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "otpTo": {
+            "type": "string"
+          }
+        }
+      },
+      "AccountDTO": {
+        "type": "object",
+        "properties": {
+          "msisdn": {
+            "type": "string"
+          },
+          "applicantId": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginReq": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string"
+          },
+          "credential": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Generated server url",
+      "url": "http://localhost:8080"
+    }
+  ],
+  "openapi": "3.0.1",
+  "paths": {
+    "/existing": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExistingReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "operationId": "accountExisting",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExistingResp"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "account-controller"
+        ]
+      }
+    },
+    "/register/passwordcriteria": {
+      "get": {
+        "operationId": "passwordCriteria",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasswordcriteriaResp"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "account-controller"
+        ]
+      }
+    },
+    "/passwordcriteria": {
+      "get": {
+        "operationId": "passwordCriteria_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasswordcriteriaResp"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "account-controller"
+        ]
+      }
+    },
+    "/{accountId}/password": {
+      "put": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetpasswordReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "operationId": "passwordSet",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetpasswordResp"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "accountId",
+            "required": true
+          }
+        ],
+        "tags": [
+          "account-controller"
+        ]
+      }
+    },
+    "/login": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "operationId": "login",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResp"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "account-controller"
+        ]
+      }
+    },
+    "/register/request": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequestReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "operationId": "requestRegister",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterRequestResp"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "account-controller"
+        ]
+      }
+    },
+    "/logout": {
+      "post": {
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResp"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "account-controller"
+        ]
+      }
+    },
+    "/recoverpassword/request": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoverpasswordRequestReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "operationId": "recoverpasswordRequest",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverpasswordRequestResp"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "account-controller"
+        ]
+      }
+    },
+    "/register/confirm": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterConfirmReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "operationId": "confirmRegister",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterConfirmResp"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "account-controller"
+        ]
+      }
+    },
+    "/recoverpassword/setpassword": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoverpasswordSetpasswordReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "operationId": "recoverpasswordSetpassword",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverpasswordSetpasswordResp"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "account-controller"
+        ]
+      }
+    },
+    "/{accountId}": {
+      "get": {
+        "operationId": "getAccount",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountDTO"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "accountId",
+            "required": true
+          }
+        ],
+        "tags": [
+          "account-controller"
+        ]
+      },
+      "delete": {
+        "operationId": "deleteAccount",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountDeleteResp"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "accountId",
+            "required": true
+          }
+        ],
+        "tags": [
+          "account-controller"
+        ]
+      },
+      "put": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "operationId": "putAccount",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountDTO"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "accountId",
+            "required": true
+          }
+        ],
+        "tags": [
+          "account-controller"
+        ]
+      }
+    },
+    "/termcondition/confirm": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TermconditionConfirmResp"
+              }
+            }
+          },
+          "required": true
+        },
+        "operationId": "confirmRegister_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TermconditionConfirmReq"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "account-controller"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  }
+}
