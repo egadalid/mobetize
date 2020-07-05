@@ -43,14 +43,16 @@ paths:
                   format: email
                 phoneNumber:
                   type: integer
-        description: Send email or phone number.
+              example:
+                email: "egadalid@mobetize.com"
+        description: Send email or phone number. Only one value type should be sent.
         required: true
       responses:
         "200":
           $ref: "#/components/responses/Success"
         "400":
           $ref: "#/components/responses/Error"
-      summary: Initial registration using phone
+      summary: Forgot password
       externalDocs:
         description: Wireframe page
         url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/c867e2c2-03e0-4c92-95d7-aa5659a4c792/All-users-192
@@ -58,7 +60,7 @@ paths:
     post:
       tags:
         - Password
-      description: Verify forgot password verification code.
+      description: Verify forgot password verification code. A user token is provided as response. GUI should redirect to setting of password page.
       operationId: passwordVerify
       requestBody:
         content:
@@ -72,10 +74,21 @@ paths:
         required: true
       responses:
         "200":
-          $ref: "#/components/responses/Success"
-        "400":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                  token:
+                    type: string
+                example:
+                  id: "c1d0a583-fda3-4329-b3e8-3faefe804b9d"
+                  token: "a6c00c43-155a-4389-ad4d-97536c5ef9cb"
+        "500":
           $ref: "#/components/responses/Error"
-      summary: Initial registration using phone
+      summary: Verifiy forgot password request
       externalDocs:
         description: Wireframe page
         url: https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/99546dc6-54c4-4d3b-89a0-62439ff98854/All-users-109
@@ -97,18 +110,18 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/Success"
-        "400":
+        "500":
           $ref: "#/components/responses/Error"
       summary: Initial registration using phone
       externalDocs:
         description: Wireframe page
         url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/c867e2c2-03e0-4c92-95d7-aa5659a4c792/All-users-192
   "/phone/{phoneNumber}/verify":
-    get:
+    post:
       tags:
         - Co-Applicant
       description: Validate phone number by providing the verification code. An account
-        will be created associated with the phone number.
+        will be created associated with the phone number. This verification will be considered the same as user logging-in.
       operationId: validatePhoneNumber
       parameters:
         - name: phoneNumber
@@ -132,23 +145,189 @@ paths:
         required: true
       responses:
         "200":
-          description: OK
+          description: successful operation
           content:
-            "*/*":
+            application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                properties:
+                  id:
+                    type: string
+                  token:
+                    type: string
+                example:
+                  id: "c1d0a583-fda3-4329-b3e8-3faefe804b9d"
+                  token: "a6c00c43-155a-4389-ad4d-97536c5ef9cb"
         "400":
           description: Invalid validation code
       summary: Phone validation
       externalDocs:
         description: Wireframe page
         url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/329e9aa9-2cfc-4fba-94bd-cdd21a293823/All-users-193
-  /product/list:
+  /branch/{finCode}/list:
+    get:
+      tags:
+        - Branch
+      description: Get banking products available.
+      operationId: getBranchList
+      parameters:
+        - name: finCode
+          in: path
+          description: Financial institution code.
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Array of branches
+          headers:
+            X-Process-Id:
+              schema:
+                type: string
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Branch"
+      summary: Get list of branches
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/53c807e7-1a0f-4879-83a2-59d4dc844aaf/All-users-82
+  /data/employer/{prefix}:
+    get:
+      tags:
+        - Data
+      description: Get known list of employers.
+      operationId: getEmployerList
+      parameters:
+        - name: prefix
+          in: path
+          description: Employer search criteria.
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Array of employers
+          headers:
+            X-Process-Id:
+              schema:
+                type: string
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Employer"
+      summary: Get list of employers
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/e68c01c8-a5a0-4bbc-9138-73240b9bad85/All-users-105
+  /data/employmentStatus:
+    get:
+      tags:
+        - Data
+      description: Get list of employment status.
+      operationId: getEmploymentStatus
+      responses:
+        "200":
+          description: Array of employment status
+          headers:
+            X-Process-Id:
+              schema:
+                type: string
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reference"
+      summary: Get list of employment status
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/215ae883-dfe2-4f8a-80b1-4b2418293a55/All-users-88
+  /data/incomeSource:
+    get:
+      tags:
+        - Data
+      description: Get list of income sources.
+      operationId: getIncomeSource
+      responses:
+        "200":
+          description: Array of income sources
+          headers:
+            X-Process-Id:
+              schema:
+                type: string
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reference"
+      summary: Get list of income source
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/215ae883-dfe2-4f8a-80b1-4b2418293a55/All-users-88
+  /data/idList:
+    get:
+      tags:
+        - Data
+      description: Get list of government id accepted.
+      operationId: getIdTypeList
+      responses:
+        "200":
+          description: Array of id types
+          headers:
+            X-Process-Id:
+              schema:
+                type: string
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reference"
+      summary: Get list of valid id's
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/033f5131-adf6-46e3-9da1-911e67d96ea2/All-users-83
+  /data/accountPurpose:
+    get:
+      tags:
+        - Data
+      description: Get list of account purposes.
+      operationId: getAccountPurposeList
+      responses:
+        "200":
+          description: Array of account purposes
+          headers:
+            X-Process-Id:
+              schema:
+                type: string
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reference"
+      summary: Get list of valid account purpose
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/26850b5a-fb63-4f00-b33c-d49a88429073/All-users-89
+  /product/{finCode}/list:
     get:
       tags:
         - Product
       description: Get banking products available.
       operationId: getProducts
+      parameters:
+        - name: finCode
+          in: path
+          description: Financial institution code.
+          required: true
+          schema:
+            type: integer
       responses:
         "200":
           description: Array of products
@@ -166,12 +345,19 @@ paths:
       externalDocs:
         description: Wireframe page
         url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/ff3a5700-5611-4608-acea-b9e8ea6422cd/All-users-63
-  /product/offers:
+  /product/{finCode}/offers:
     get:
       tags:
         - Product
       description: Get banking products offers.
       operationId: getProductOffers
+      parameters:
+        - name: finCode
+          in: path
+          description: Financial institution code.
+          required: true
+          schema:
+            type: integer
       responses:
         "200":
           description: Array of products
@@ -189,11 +375,11 @@ paths:
       externalDocs:
         description: Wireframe page
         url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/ff3a5700-5611-4608-acea-b9e8ea6422cd/All-users-73
-  /vault/list:
+  /vault:
     get:
       tags:
         - Vault
-      description: Get user products in vault.
+      description: Get vault content.
       operationId: getProductsInVault
       responses:
         "200":
@@ -203,16 +389,15 @@ paths:
               schema:
                 type: string
           content:
-            "*/*":
+            "application/json":
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/VaultProduct"
+                  $ref: "#/components/schemas/Vault"
       summary: Get user vault containing products
       externalDocs:
         description: Wireframe page
         url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/6ba7f4c8-14fc-42be-8d7b-3247704d6e4e/All-users-72
-  /vault/product:
     post:
       tags:
         - Vault
@@ -225,12 +410,21 @@ paths:
               $ref: "#/components/schemas/Product"
       responses:
         "200":
-          $ref: "#/components/responses/Success"
+          description: Vault id created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  vaultId:
+                    type: string
+                example:
+                    vaultId: "0560c1fe-69f4-43cb-a910-b6e9c20b4da8"
       summary: Add product in user vault
       externalDocs:
         description: Wireframe page (add to vault button)
         url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-71
-  "/vault/product/{id}":
+  "/vault/{id}":
     get:
       tags:
         - Vault
@@ -245,7 +439,7 @@ paths:
             type: string
       responses:
         "200":
-          $ref: "#/components/schemas/VaultProduct"
+          $ref: "#/components/schemas/Vault"
       summary: Get product in user vault
       externalDocs:
         description: Wireframe page
@@ -254,7 +448,7 @@ paths:
       tags:
         - Vault
       description: Update product in vault.
-      operationId: updateProductInVault
+      operationId: updateVault
       parameters:
         - name: id
           in: path
@@ -266,7 +460,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/VaultProduct"
+              $ref: "#/components/schemas/Vault"
       responses:
         "200":
           $ref: "#/components/responses/Success"
@@ -274,6 +468,45 @@ paths:
       externalDocs:
         description: Wireframe page
         url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-71
+    delete:
+      tags:
+        - Vault
+      description: Remove in vault.
+      operationId: removeVault
+      parameters:
+        - name: id
+          in: path
+          description: Vault product id.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+      summary: Remove product in user vault
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-71
+  "/vault/{id}/start":
+    get:
+      tags:
+        - Vault
+      description: Start application for the product in vault. "Start Now" button.
+      operationId: applyProductInVault
+      parameters:
+        - name: id
+          in: path
+          description: Vault id.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+      summary: Start product application
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-72
   "/product/{productId}":
     get:
       tags:
@@ -355,20 +588,12 @@ paths:
           description: Application not found
         "405":
           description: Registration exception
-  "/user/{id}/uploadImage":
+  "/user/uploadImage":
     post:
       tags:
         - User
       summary: uploads an image
       operationId: uploadFile
-      parameters:
-        - name: id
-          in: path
-          description: ID of the user
-          required: true
-          schema:
-            type: integer
-            format: string
       requestBody:
         content:
           multipart/form-data:
@@ -389,34 +614,91 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
-  "/user/{id}/password":
+  "/user/password":
     put:
       tags:
         - User
       summary: Set user password
       description: Update user password
       operationId: setPassword
-      parameters:
-        - name: id
-          in: path
-          description: ID of the user
-          required: true
-          schema:
-            type: integer
-            format: string
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Password"
+              properties:
+                newPassword:
+                  type: string
         description: Password data
         required: true
       responses:
         "200":
           $ref: "#/components/responses/Success"
+        "500":
+          $ref: "#/components/responses/Error"
       externalDocs:
         description: Wireframe page
         url: https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/9794686e-9cce-45ac-b0d9-dacf9f40d91a/All-users-110
+  /user/existing:
+    post:
+      tags:
+        - User
+      summary: Check user email already existing
+      operationId: checkUserEmail
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+        description: User email address
+        required: true
+      responses:
+        "200":
+          description: Return boolean if credential exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  existing: 
+                    type: boolean
+        "500":
+          $ref: "#/components/responses/Error"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/a71469ec-1b66-470e-b0b2-d2c38ad39283/All-users-52
+  /user/register/passwordCriteria:
+    get:
+      tags:
+        - User
+      summary: Get password validity conditions
+      operationId: getPasswordCriteria
+      responses:
+        "200":
+          description: Return password validity conditions and regex to use
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  regex: 
+                    type: string
+                  conditions:
+                    type: array
+                    items:
+                      type: string
+                example: 
+                  regex: "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&]){8,}"
+                  conditions: [
+                    "Minimum 8 characters at least 1 Uppercase Alphabet",
+                    "1 Lowercase Alphabet"
+                    ]
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/be333698-9a63-4c53-801c-9bc57433a20f/All-users-194
   /user/register:
     post:
       tags:
@@ -436,6 +718,8 @@ paths:
                   format: email
                 phoneNumber:
                   type: integer
+                finCode:
+                  type: integer
         description: Registration info
         required: true
       responses:
@@ -444,25 +728,19 @@ paths:
       externalDocs:
         description: Wireframe page
         url: https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/a71469ec-1b66-470e-b0b2-d2c38ad39283/All-users-52
-  "/user/{id}/confirm":
+  "/user/confirm":
     put:
       tags:
         - User
       summary: Confirm terms and conditions
       operationId: confirmTermsAndConditions
-      parameters:
-        - name: id
-          in: path
-          description: ID of the user
-          required: true
-          schema:
-            type: integer
-            format: string
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Confirmation"
+              properties:
+                offers: 
+                  type: boolean
         description: Confirm registration
         required: true
       responses:
@@ -472,7 +750,7 @@ paths:
         description: Wireframe page
         url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/c867e2c2-03e0-4c92-95d7-aa5659a4c792/All-users-197
   /user/login:
-    get:
+    post:
       tags:
         - User
       summary: Logs User into the system
@@ -487,23 +765,19 @@ paths:
       responses:
         "200":
           description: successful operation
-          headers:
-            X-Rate-Limit:
-              description: calls per hour allowed by the User
-              schema:
-                type: integer
-                format: int32
-            X-Expires-After:
-              description: date in UTC when token expires
-              schema:
-                type: string
-                format: date-time
           content:
             application/json:
               schema:
-                type: string
+                properties:
+                  id:
+                    type: string
+                  token:
+                    type: string
+                example:
+                  id: "c1d0a583-fda3-4329-b3e8-3faefe804b9d"
+                  token: "a6c00c43-155a-4389-ad4d-97536c5ef9cb"
         "400":
-          description: Invalid username/password supplied
+          $ref: "#/components/responses/Error"
       externalDocs:
         description: Wireframe page
         url: https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/921119e7-e039-4912-ba8f-8d7c1d3c5774/All-users-51
@@ -516,31 +790,41 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/Success"
-  "/user/{id}/membership":
+  "/user/about":
     post:
       tags:
         - User
       summary: User registration for FI membership
-      operationId: applyForNewMemberhip
+      operationId: applyMemberhip
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemberBasicInfo"
+        description: Membership information
+        required: true
       responses:
         "200":
           description: Response will contain the applicantId assigned to the user.
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiResponse"
-                  - type: object
-                    properties:
-                      applicantId:
-                        type: integer
-                      applicantGuid:
-                        type: string
-  "/user/{id}":
+                properties:
+                  applicantId:
+                    type: integer
+                  applicantGuid:
+                    type: string
+              example:
+                applicantId: 12345
+                applicantGuid: "cb8d3365-4f19-4c0a-adbe-81055c634e53"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/d78131bb-c284-4567-9f5a-fcda20160438/All-users-87
+  "/user":
     get:
       tags:
         - User
-      summary: Get User
+      summary: Get User information
       operationId: getUserById
       parameters:
         - name: id
@@ -614,6 +898,9 @@ components:
         "application/json":
           schema:
             $ref: "#/components/schemas/ApiResponse"
+          example: 
+            code: "99"
+            message: "Error processing request"
   requestBodies:
     Registration:
       content:
@@ -628,27 +915,46 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    Password:
+    Branch:
       type: object
       properties:
-        password:
+        branchId:
+          type: string
+        name:
+          type: string
+        location:
           type: string
       example:
-        password: Mobetiz3!
+        branchId: cdd21ddd-fe0c-4b0f-9a0a-91ab19e0915e
+        name: Kingsway Branch
+        location: Burnaby
+    Employer:
+      type: object
+      properties:
+        employerId:
+          type: string
+        name:
+          type: string
+        location:
+          type: string
+    Reference:
+      type: object
+      description: Generic object reference data
+      properties:
+        code:
+          type: string
+        name:
+          type: string
     Registration:
       type: object
       properties:
         registrationId:
           type: string
+        termsAccepted:
+          type: boolean
       example:
         registrationId: cdd21ddd-fe0c-4b0f-9a0a-91ab19e0915e
-    Validation:
-      type: object
-      properties:
-        validationCode:
-          type: string
-      example:
-        validationCode: e2e33ac5-ff77-4d5c-8932-85f1903fb7f2
+        termsAccepted: true
     Credential:
       type: object
       properties:
@@ -659,61 +965,20 @@ components:
       example:
         email: egadalid@mobetize.com
         password: Mob3t1z3!
-    Confirmation:
-      type: object
-      properties:
-        offers:
-          type: boolean
-      example:
-        offers: "true"
-    Order:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        ApplicationId:
-          type: integer
-          format: int64
-        quantity:
-          type: integer
-          format: int32
-        shipDate:
-          type: string
-          format: date-time
-        status:
-          type: string
-          description: Order Status
-          enum:
-            - placed
-            - approved
-            - delivered
-        complete:
-          type: boolean
-          default: false
-    Category:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
     User:
       type: object
+      required: 
+        - name
+        - email
+        - phone
       properties:
         id:
           type: string
           example: 97e64ab0-8970-4eba-a5fd-8599af126761
           format: uuid
-        username:
+        name:
           type: string
-        firstName:
-          type: string
-          example: John
-        lastName:
-          type: string
-          example: Wick
+          example: John Wick
         email:
           type: string
           example: egadalid@mobetize.com
@@ -741,6 +1006,70 @@ components:
           type: boolean
         member:
           $ref: "#/components/schemas/Member"
+    MemberBasicInfo:
+      type: object
+      properties:
+        scanCode:
+          type: string
+          description: transaction id for scan processing
+        name:
+          type: string
+        middleName:
+          type: string
+        surName:
+          type: string
+        dob:
+          type: string
+          format: date
+        scanInfoCorrect:
+          type: boolean
+        address:
+          type: string
+        city:
+          type: string
+        province: 
+          type: string
+        postalCode:
+          type: string
+        sameMailingAddress:
+          type: boolean
+        isJoint:
+          type: boolean
+        isOverdraftProtected:
+          type: boolean
+        needDebitCard:
+          type: boolean
+        onBehalfThirdParty:
+          type: boolean
+        isPEP:
+          type: boolean
+        isHOI:
+          type: boolean
+        allowCreditCheck:
+          type: boolean
+    MemberIncome:
+      type: object
+      properties:
+        employmentStatus:
+          type: string
+        jobTitle:
+          type: string
+        employerName:
+          type: string
+        employerContactNo:
+          type: string
+        grossIncome:
+          type: string
+        sourceOfIncome:
+          type: array
+          items:
+            type: string
+        sin:
+          type: string
+        isResident:
+          type: boolean
+        isResidentOther:
+          type: boolean
     Member:
       type: object
       properties:
@@ -766,7 +1095,7 @@ components:
           type: integer
         dob:
           type: string
-          format: date-time
+          format: date
         email:
           type: string
         ssn:
@@ -809,6 +1138,7 @@ components:
           format: date-time
         gender:
           type: string
+        
     Application:
       type: object
       required:
@@ -821,46 +1151,46 @@ components:
           $ref: "#/components/schemas/Product"
     Product:
       type: object
+      required: 
+        - productId
+        - name
       properties:
         productId:
           type: integer
           format: int32
         name:
           type: string
+        description:
+          type: string
+        shortDescription:
+          type: string
+        categoryName:
+          type: string
+        imageUrl:
+          type: string
         parentId:
           type: integer
           format: int32
-      example:
-        productId: 9
-        name: Personal Savings
-        parentId: 1
-    VaultProduct:
-      type: object
-      properties:
-        vaultProductId:
-          type: string
-        product:
-          $ref: "#/components/schemas/Product"
-      example:
-        productId: 9
-        name: Personal Savings
-        parentId: 1
     Vault:
       type: object
       properties:
-        id:
+        vaultId:
           type: string
-        products:
-          type: array
-          items:
-            $ref: "#/components/schemas/VaultProduct"
-        parentId:
+        progress:
+          minimum: 0
+          maximum: 100
           type: integer
-          format: int32
+        progressCode:
+          type: string
+          description: Contains a code which will indicate what type of info is still needed
+        product:
+          $ref: "#/components/schemas/Product"
       example:
-        productId: 9
-        name: Personal Savings
-        parentId: 1
+        vaultId: "f157766a-6e43-4a13-9c53-93b72ea374f8"
+        progress: 0
+        product:
+          productId: 9
+          name: Personal Savings
     ProductDetail:
       allOf:
         - $ref: "#/components/schemas/Product"
@@ -875,3 +1205,6 @@ components:
           type: string
         message:
           type: string
+      example:
+        code: "0"
+        message: "Successfully processed"
