@@ -25,6 +25,10 @@ tags:
     description: User applications
   - name: Password
     description: User password api
+  - name: Data
+    description: Data lookup api
+  - name: Branch
+    description: Branch information api
 paths:
   /password/forgot:
     post:
