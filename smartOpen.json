@@ -10,8 +10,8 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 tags:
-  - name: Co-Applicant
-    description: Co-Applicant registration process
+  - name: Phone Verification
+    description: Phone number verification process
     externalDocs:
       description: Find out more
       url: http://shorturl.at/cjIXY
@@ -21,8 +21,6 @@ tags:
     description: Product information api
   - name: Vault
     description: Vault api
-  - name: Application
-    description: User applications
   - name: Password
     description: User password api
 paths:
@@ -95,8 +93,8 @@ paths:
   "/phone/{phoneNumber}/register":
     post:
       tags:
-        - Co-Applicant
-      description: Validate phone number. A code will be sent to the phone number.
+        - Phone Verification
+      description: Validate phone number. A code will be sent to the phone number. If part of co-applicant registration, a registration id is required which is sent in the link that was emailed to the co-applicant.
       operationId: registerPhoneNumber
       parameters:
         - name: phoneNumber
@@ -119,7 +117,7 @@ paths:
   "/phone/{phoneNumber}/verify":
     post:
       tags:
-        - Co-Applicant
+        - Phone Verification
       description: Validate phone number by providing the verification code. An account
         will be created associated with the phone number. This verification will be considered the same as user logging-in.
       operationId: validatePhoneNumber
@@ -561,7 +559,7 @@ paths:
   "/phone/{phoneNumber}/resend":
     post:
       tags:
-        - Co-Applicant
+        - Phone Verification
       description: Resend validation code to phone number.
       operationId: resendPhoneCode
       parameters:
@@ -780,7 +778,7 @@ paths:
         required: true
       responses:
         "200":
-          $ref: "#/components/responses/Success"
+          $ref: "#/components/schemas/Registration"
       externalDocs:
         description: Wireframe page
         url: https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/a71469ec-1b66-470e-b0b2-d2c38ad39283/All-users-52
@@ -1182,7 +1180,7 @@ components:
         termsAccepted:
           type: boolean
       example:
-        registrationId: cdd21ddd-fe0c-4b0f-9a0a-91ab19e0915e
+        registrationId: cdd21ddd
         termsAccepted: true
     Credential:
       type: object
