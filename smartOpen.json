@@ -1,2181 +1,1371 @@
-{
-  "openapi": "3.0.0",
-  "info": {
-    "description": "This is an API documentation for SmartOpen.",
-    "version": "1.1.0",
-    "title": "Mobetize smartOpen",
-    "termsOfService": "http://mobetize.com",
-    "contact": {
-      "email": "egadalid@mobetize.com"
-    },
-    "license": {
-      "name": "Apache 2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-    }
-  },
-  "tags": [
-    {
-      "name": "Co-Applicant",
-      "description": "Co-Applicant registration process",
-      "externalDocs": {
-        "description": "Find out more",
-        "url": "https://drive.google.com/file/d/1LaTiSLVEwyX7AfYKZ-MJFbE5I-xL56T_/view?usp=sharing"
-      }
-    },
-    {
-      "name": "User",
-      "description": "Operations for smartOpen user."
-    },
-    {
-      "name": "Product",
-      "description": "Product information api"
-    },
-    {
-      "name": "Vault",
-      "description": "Vault api"
-    },
-    {
-      "name": "Application",
-      "description": "User applications"
-    },
-    {
-      "name": "Password",
-      "description": "User password api"
-    }
-  ],
-  "paths": {
-    "/password/forgot": {
-      "post": {
-        "tags": [
-          "Password"
-        ],
-        "description": "Initiate forgot password process.",
-        "operationId": "forgotPassword",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email"
-                  },
-                  "phoneNumber": {
-                    "type": "integer"
-                  }
-                },
-                "example": {
-                  "email": "egadalid@mobetize.com"
-                }
-              }
-            }
-          },
-          "description": "Send email or phone number. Only one value type should be sent.",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/Success"
-          },
-          "400": {
-            "$ref": "#/components/responses/Error"
-          }
-        },
-        "summary": "Forgot password",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/c867e2c2-03e0-4c92-95d7-aa5659a4c792/All-users-192"
-        }
-      }
-    },
-    "/password/verify": {
-      "post": {
-        "tags": [
-          "Password"
-        ],
-        "description": "Verify forgot password verification code. A user token is provided as response. GUI should redirect to setting of password page.",
-        "operationId": "passwordVerify",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "verificationCode": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "description": "Verification code.",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "token": {
-                      "type": "string"
-                    }
-                  },
-                  "example": {
-                    "id": "c1d0a583-fda3-4329-b3e8-3faefe804b9d",
-                    "token": "a6c00c43-155a-4389-ad4d-97536c5ef9cb"
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "$ref": "#/components/responses/Error"
-          }
-        },
-        "summary": "Verifiy forgot password request",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/99546dc6-54c4-4d3b-89a0-62439ff98854/All-users-109"
-        }
-      }
-    },
-    "/phone/{phoneNumber}/register": {
-      "post": {
-        "tags": [
-          "Co-Applicant"
-        ],
-        "description": "Validate phone number. A code will be sent to the phone number.",
-        "operationId": "registerPhoneNumber",
-        "parameters": [
-          {
-            "name": "phoneNumber",
-            "in": "path",
-            "description": "Phone number of customer.",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "$ref": "#/components/requestBodies/Registration"
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/Success"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error"
-          }
-        },
-        "summary": "Initial registration using phone",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/c867e2c2-03e0-4c92-95d7-aa5659a4c792/All-users-192"
-        }
-      }
-    },
-    "/phone/{phoneNumber}/verify": {
-      "post": {
-        "tags": [
-          "Co-Applicant"
-        ],
-        "description": "Validate phone number by providing the verification code. An account will be created associated with the phone number. This verification will be considered the same as user logging-in.",
-        "operationId": "validatePhoneNumber",
-        "parameters": [
-          {
-            "name": "phoneNumber",
-            "in": "path",
-            "description": "Phone number of customer.",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64",
-              "minimum": 1,
-              "maximum": 10
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "validationCode": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "description": "Validation Code",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "token": {
-                      "type": "string"
-                    }
-                  },
-                  "example": {
-                    "id": "c1d0a583-fda3-4329-b3e8-3faefe804b9d",
-                    "token": "a6c00c43-155a-4389-ad4d-97536c5ef9cb"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid validation code"
-          }
-        },
-        "summary": "Phone validation",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/329e9aa9-2cfc-4fba-94bd-cdd21a293823/All-users-193"
-        }
-      }
-    },
-    "/branch/{finCode}/list": {
-      "get": {
-        "tags": [
-          "Branch"
-        ],
-        "description": "Get banking products available.",
-        "operationId": "getBranchList",
-        "parameters": [
-          {
-            "name": "finCode",
-            "in": "path",
-            "description": "Financial institution code.",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Array of branches",
-            "headers": {
-              "X-Process-Id": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Branch"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get list of branches",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/53c807e7-1a0f-4879-83a2-59d4dc844aaf/All-users-82"
-        }
-      }
-    },
-    "/data/employer/{prefix}": {
-      "get": {
-        "tags": [
-          "Data"
-        ],
-        "description": "Get known list of employers.",
-        "operationId": "getEmployerList",
-        "parameters": [
-          {
-            "name": "prefix",
-            "in": "path",
-            "description": "Employer search criteria.",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Array of employers",
-            "headers": {
-              "X-Process-Id": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Employer"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get list of employers",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/e68c01c8-a5a0-4bbc-9138-73240b9bad85/All-users-105"
-        }
-      }
-    },
-    "/data/payee/{prefix}": {
-      "get": {
-        "tags": [
-          "Data"
-        ],
-        "description": "Get known list of payees (utilities, credit card, etc.).",
-        "operationId": "getPayeeList",
-        "parameters": [
-          {
-            "name": "prefix",
-            "in": "path",
-            "description": "Payee search criteria.",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Array of payees",
-            "headers": {
-              "X-Process-Id": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Reference"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get list of payees",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/410aa190-6404-4696-b2b5-3dcdd173d424/All-users-115"
-        }
-      }
-    },
-    "/data/employmentStatus": {
-      "get": {
-        "tags": [
-          "Data"
-        ],
-        "description": "Get list of employment status.",
-        "operationId": "getEmploymentStatus",
-        "responses": {
-          "200": {
-            "description": "Array of employment status",
-            "headers": {
-              "X-Process-Id": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Reference"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get list of employment status",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/215ae883-dfe2-4f8a-80b1-4b2418293a55/All-users-88"
-        }
-      }
-    },
-    "/data/incomeSource": {
-      "get": {
-        "tags": [
-          "Data"
-        ],
-        "description": "Get list of income sources.",
-        "operationId": "getIncomeSource",
-        "responses": {
-          "200": {
-            "description": "Array of income sources",
-            "headers": {
-              "X-Process-Id": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Reference"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get list of income source",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/215ae883-dfe2-4f8a-80b1-4b2418293a55/All-users-88"
-        }
-      }
-    },
-    "/data/idList": {
-      "get": {
-        "tags": [
-          "Data"
-        ],
-        "description": "Get list of government id accepted.",
-        "operationId": "getIdTypeList",
-        "responses": {
-          "200": {
-            "description": "Array of id types",
-            "headers": {
-              "X-Process-Id": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Reference"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get list of valid id's",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/033f5131-adf6-46e3-9da1-911e67d96ea2/All-users-83"
-        }
-      }
-    },
-    "/data/accountPurpose": {
-      "get": {
-        "tags": [
-          "Data"
-        ],
-        "description": "Get list of account purposes.",
-        "operationId": "getAccountPurposeList",
-        "responses": {
-          "200": {
-            "description": "Array of account purposes",
-            "headers": {
-              "X-Process-Id": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Reference"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get list of valid account purpose",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/26850b5a-fb63-4f00-b33c-d49a88429073/All-users-89"
-        }
-      }
-    },
-    "/product/{finCode}/list": {
-      "get": {
-        "tags": [
-          "Product"
-        ],
-        "description": "Get banking products available.",
-        "operationId": "getProducts",
-        "parameters": [
-          {
-            "name": "finCode",
-            "in": "path",
-            "description": "Financial institution code.",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Array of products",
-            "headers": {
-              "X-Process-Id": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Product"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get banking products",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/ff3a5700-5611-4608-acea-b9e8ea6422cd/All-users-63"
-        }
-      }
-    },
-    "/product/{finCode}/offers": {
-      "get": {
-        "tags": [
-          "Product"
-        ],
-        "description": "Get banking products offers.",
-        "operationId": "getProductOffers",
-        "parameters": [
-          {
-            "name": "finCode",
-            "in": "path",
-            "description": "Financial institution code.",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Array of products",
-            "headers": {
-              "X-Process-Id": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Product"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get product offers",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/ff3a5700-5611-4608-acea-b9e8ea6422cd/All-users-73"
-        }
-      }
-    },
-    "/vault": {
-      "get": {
-        "tags": [
-          "Vault"
-        ],
-        "description": "Get vault content.",
-        "operationId": "getProductsInVault",
-        "responses": {
-          "200": {
-            "description": "Array of products in vault",
-            "headers": {
-              "X-Process-Id": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Vault"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get user vault containing products",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/6ba7f4c8-14fc-42be-8d7b-3247704d6e4e/All-users-72"
-        }
-      },
-      "post": {
-        "tags": [
-          "Vault"
-        ],
-        "description": "Add product in vault.",
-        "operationId": "addProductInVault",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Product"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Vault id created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "vaultId": {
-                      "type": "string"
-                    }
-                  },
-                  "example": {
-                    "vaultId": "0560c1fe-69f4-43cb-a910-b6e9c20b4da8"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Add product in user vault",
-        "externalDocs": {
-          "description": "Wireframe page (add to vault button)",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-71"
-        }
-      }
-    },
-    "/vault/{id}": {
-      "get": {
-        "tags": [
-          "Vault"
-        ],
-        "description": "Update product in vault.",
-        "operationId": "updateProductInVault",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Vault product id.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/schemas/Vault"
-          }
-        },
-        "summary": "Get product in user vault",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-71"
-        }
-      },
-      "put": {
-        "tags": [
-          "Vault"
-        ],
-        "description": "Update product in vault.",
-        "operationId": "updateVault",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Vault product id.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Vault"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/Success"
-          }
-        },
-        "summary": "Update product in user vault",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-71"
-        }
-      },
-      "delete": {
-        "tags": [
-          "Vault"
-        ],
-        "description": "Remove in vault.",
-        "operationId": "removeVault",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Vault product id.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/Success"
-          }
-        },
-        "summary": "Remove product in user vault",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-71"
-        }
-      }
-    },
-    "/vault/{id}/start": {
-      "get": {
-        "tags": [
-          "Vault"
-        ],
-        "description": "Start application for the product in vault. \"Start Now\" button.",
-        "operationId": "applyProductInVault",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Vault id.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/Success"
-          }
-        },
-        "summary": "Start product application",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-72"
-        }
-      }
-    },
-    "/product/{productId}": {
-      "get": {
-        "tags": [
-          "Product"
-        ],
-        "description": "Get banking products available.",
-        "operationId": "getProduct",
-        "parameters": [
-          {
-            "name": "productId",
-            "in": "path",
-            "description": "Product id.",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/schemas/ProductDetail"
-          }
-        },
-        "summary": "Get banking products",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/113957be-7ed7-47b5-b73f-5ea40ed15467/All-users-65"
-        }
-      }
-    },
-    "/phone/{phoneNumber}/resend": {
-      "post": {
-        "tags": [
-          "Co-Applicant"
-        ],
-        "description": "Resend validation code to phone number.",
-        "operationId": "resendPhoneCode",
-        "parameters": [
-          {
-            "name": "phoneNumber",
-            "in": "path",
-            "description": "Phone number of customer.",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64",
-              "minimum": 1,
-              "maximum": 10
-            }
-          }
-        ],
-        "requestBody": {
-          "$ref": "#/components/requestBodies/Registration"
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/Success"
-          }
-        },
-        "summary": "Resend validation code",
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/329e9aa9-2cfc-4fba-94bd-cdd21a293823/All-users-193"
-        }
-      }
-    },
-    "/application": {
-      "post": {
-        "tags": [
-          "Application"
-        ],
-        "summary": "Add a new application",
-        "operationId": "addApplication",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Application"
-              }
-            }
-          },
-          "description": "User application information",
-          "required": true
-        },
-        "responses": {
-          "405": {
-            "description": "Invalid input"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Application"
-        ],
-        "summary": "Update an existing Application",
-        "operationId": "updateApplication",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Application"
-              }
-            }
-          },
-          "description": "Update to user application",
-          "required": true
-        },
-        "responses": {
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Application not found"
-          },
-          "405": {
-            "description": "Registration exception"
-          }
-        }
-      }
-    },
-    "/user/upload/frontImage": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Uploads an image for front of id",
-        "operationId": "uploadIdFrontImage",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "additionalMetadata": {
-                    "description": "Additional data to pass to server",
-                    "type": "string"
-                  },
-                  "file": {
-                    "description": "file to upload",
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MemberBasicInfo"
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/6b62bcb7-42a4-4dd8-96ab-b448a38c4ce3/All-users-85"
-        }
-      }
-    },
-    "/user/upload/backImage": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Uploads an image for back of id",
-        "operationId": "uploadIdBackImage",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "additionalMetadata": {
-                    "description": "Additional data to pass to server",
-                    "type": "string"
-                  },
-                  "file": {
-                    "description": "file to upload",
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MemberBasicInfo"
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/6b62bcb7-42a4-4dd8-96ab-b448a38c4ce3/All-users-85"
-        }
-      }
-    },
-    "/user/upload/selfie": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Uploads a selfie image",
-        "operationId": "uploadSelfie",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "additionalMetadata": {
-                    "description": "Additional data to pass to server",
-                    "type": "string"
-                  },
-                  "file": {
-                    "description": "file to upload",
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MemberBasicInfo"
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/399d7ad6-7556-435a-80ba-54143444d335/All-users-86"
-        }
-      }
-    },
-    "/user/password": {
-      "put": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Set user password",
-        "description": "Update user password",
-        "operationId": "setPassword",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "newPassword": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "description": "Password data",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/Success"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error"
-          }
-        },
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/9794686e-9cce-45ac-b0d9-dacf9f40d91a/All-users-110"
-        }
-      }
-    },
-    "/user/existing": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Check user email already existing",
-        "operationId": "checkUserEmail",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email"
-                  }
-                }
-              }
-            }
-          },
-          "description": "User email address",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Return boolean if credential exist",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "existing": {
-                      "type": "boolean"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "$ref": "#/components/responses/Error"
-          }
-        },
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/a71469ec-1b66-470e-b0b2-d2c38ad39283/All-users-52"
-        }
-      }
-    },
-    "/user/register/passwordCriteria": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Get password validity conditions",
-        "operationId": "getPasswordCriteria",
-        "responses": {
-          "200": {
-            "description": "Return password validity conditions and regex to use",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "regex": {
-                      "type": "string"
-                    },
-                    "conditions": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "example": {
-                    "regex": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&]){8,}",
-                    "conditions": [
-                      "Minimum 8 characters at least 1 Uppercase Alphabet",
-                      "1 Lowercase Alphabet"
+openapi: 3.0.0
+info:
+  description: This is an API documentation for SmartOpen.
+  version: 1.1.0
+  title: Mobetize smartOpen
+  termsOfService: http://mobetize.com
+  contact:
+    email: egadalid@mobetize.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+tags:
+  - name: Co-Applicant
+    description: Co-Applicant registration process
+    externalDocs:
+      description: Find out more
+      url: https://drive.google.com/file/d/1LaTiSLVEwyX7AfYKZ-MJFbE5I-xL56T_/view?usp=sharing
+  - name: User
+    description: Operations for smartOpen user.
+  - name: Product
+    description: Product information api
+  - name: Vault
+    description: Vault api
+  - name: Application
+    description: User applications
+  - name: Password
+    description: User password api
+paths:
+  /password/forgot:
+    post:
+      tags:
+        - Password
+      description: Initiate forgot password process.
+      operationId: forgotPassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                phoneNumber:
+                  type: integer
+              example:
+                email: "egadalid@mobetize.com"
+        description: Send email or phone number. Only one value type should be sent.
+        required: true
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+        "400":
+          $ref: "#/components/responses/Error"
+      summary: Forgot password
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/c867e2c2-03e0-4c92-95d7-aa5659a4c792/All-users-192
+  /password/verify:
+    post:
+      tags:
+        - Password
+      description: Verify forgot password verification code. A user token is provided as response. GUI should redirect to setting of password page.
+      operationId: passwordVerify
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                verificationCode:
+                  type: string
+        description: Verification code.
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                  token:
+                    type: string
+                example:
+                  id: "c1d0a583-fda3-4329-b3e8-3faefe804b9d"
+                  token: "a6c00c43-155a-4389-ad4d-97536c5ef9cb"
+        "500":
+          $ref: "#/components/responses/Error"
+      summary: Verifiy forgot password request
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/99546dc6-54c4-4d3b-89a0-62439ff98854/All-users-109
+  "/phone/{phoneNumber}/register":
+    post:
+      tags:
+        - Co-Applicant
+      description: Validate phone number. A code will be sent to the phone number.
+      operationId: registerPhoneNumber
+      parameters:
+        - name: phoneNumber
+          in: path
+          description: Phone number of customer.
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/Registration"
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+        "500":
+          $ref: "#/components/responses/Error"
+      summary: Initial registration using phone
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/c867e2c2-03e0-4c92-95d7-aa5659a4c792/All-users-192
+  "/phone/{phoneNumber}/verify":
+    post:
+      tags:
+        - Co-Applicant
+      description: Validate phone number by providing the verification code. An account
+        will be created associated with the phone number. This verification will be considered the same as user logging-in.
+      operationId: validatePhoneNumber
+      parameters:
+        - name: phoneNumber
+          in: path
+          description: Phone number of customer.
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            maximum: 10
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                validationCode:
+                  type: string
+        description: Validation Code
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                  token:
+                    type: string
+                example:
+                  id: "c1d0a583-fda3-4329-b3e8-3faefe804b9d"
+                  token: "a6c00c43-155a-4389-ad4d-97536c5ef9cb"
+        "400":
+          description: Invalid validation code
+      summary: Phone validation
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/329e9aa9-2cfc-4fba-94bd-cdd21a293823/All-users-193
+  /branch/{finCode}/list:
+    get:
+      tags:
+        - Branch
+      description: Get banking products available.
+      operationId: getBranchList
+      parameters:
+        - name: finCode
+          in: path
+          description: Financial institution code.
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Array of branches
+          headers:
+            X-Process-Id:
+              schema:
+                type: string
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Branch"
+      summary: Get list of branches
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/53c807e7-1a0f-4879-83a2-59d4dc844aaf/All-users-82
+  /data/employer/{prefix}:
+    get:
+      tags:
+        - Data
+      description: Get known list of employers.
+      operationId: getEmployerList
+      parameters:
+        - name: prefix
+          in: path
+          description: Employer search criteria.
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Array of employers
+          headers:
+            X-Process-Id:
+              schema:
+                type: string
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Employer"
+      summary: Get list of employers
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/e68c01c8-a5a0-4bbc-9138-73240b9bad85/All-users-105
+  /data/payee/{prefix}:
+    get:
+      tags:
+        - Data
+      description: Get known list of payees (utilities, credit card, etc.).
+      operationId: getPayeeList
+      parameters:
+        - name: prefix
+          in: path
+          description: Payee search criteria.
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Array of payees
+          headers:
+            X-Process-Id:
+              schema:
+                type: string
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reference"
+      summary: Get list of payees
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/410aa190-6404-4696-b2b5-3dcdd173d424/All-users-115
+  /data/employmentStatus:
+    get:
+      tags:
+        - Data
+      description: Get list of employment status.
+      operationId: getEmploymentStatus
+      responses:
+        "200":
+          description: Array of employment status
+          headers:
+            X-Process-Id:
+              schema:
+                type: string
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reference"
+      summary: Get list of employment status
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/215ae883-dfe2-4f8a-80b1-4b2418293a55/All-users-88
+  /data/incomeSource:
+    get:
+      tags:
+        - Data
+      description: Get list of income sources.
+      operationId: getIncomeSource
+      responses:
+        "200":
+          description: Array of income sources
+          headers:
+            X-Process-Id:
+              schema:
+                type: string
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reference"
+      summary: Get list of income source
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/215ae883-dfe2-4f8a-80b1-4b2418293a55/All-users-88
+  /data/idList:
+    get:
+      tags:
+        - Data
+      description: Get list of government id accepted.
+      operationId: getIdTypeList
+      responses:
+        "200":
+          description: Array of id types
+          headers:
+            X-Process-Id:
+              schema:
+                type: string
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reference"
+      summary: Get list of valid id's
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/033f5131-adf6-46e3-9da1-911e67d96ea2/All-users-83
+  /data/accountPurpose:
+    get:
+      tags:
+        - Data
+      description: Get list of account purposes.
+      operationId: getAccountPurposeList
+      responses:
+        "200":
+          description: Array of account purposes
+          headers:
+            X-Process-Id:
+              schema:
+                type: string
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reference"
+      summary: Get list of valid account purpose
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/26850b5a-fb63-4f00-b33c-d49a88429073/All-users-89
+  /product/{finCode}/list:
+    get:
+      tags:
+        - Product
+      description: Get banking products available.
+      operationId: getProducts
+      parameters:
+        - name: finCode
+          in: path
+          description: Financial institution code.
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Array of products
+          headers:
+            X-Process-Id:
+              schema:
+                type: string
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+      summary: Get banking products
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/ff3a5700-5611-4608-acea-b9e8ea6422cd/All-users-63
+  /product/{finCode}/offers:
+    get:
+      tags:
+        - Product
+      description: Get banking products offers.
+      operationId: getProductOffers
+      parameters:
+        - name: finCode
+          in: path
+          description: Financial institution code.
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Array of products
+          headers:
+            X-Process-Id:
+              schema:
+                type: string
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+      summary: Get product offers
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/ff3a5700-5611-4608-acea-b9e8ea6422cd/All-users-73
+  /vault:
+    get:
+      tags:
+        - Vault
+      description: Get vault content.
+      operationId: getProductsInVault
+      responses:
+        "200":
+          description: Array of products in vault
+          headers:
+            X-Process-Id:
+              schema:
+                type: string
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vault"
+      summary: Get user vault containing products
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/6ba7f4c8-14fc-42be-8d7b-3247704d6e4e/All-users-72
+    post:
+      tags:
+        - Vault
+      description: Add product in vault.
+      operationId: addProductInVault
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "200":
+          description: Vault id created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  vaultId:
+                    type: string
+                example:
+                    vaultId: "0560c1fe-69f4-43cb-a910-b6e9c20b4da8"
+      summary: Add product in user vault
+      externalDocs:
+        description: Wireframe page (add to vault button)
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-71
+  "/vault/{id}":
+    get:
+      tags:
+        - Vault
+      description: Update product in vault.
+      operationId: updateProductInVault
+      parameters:
+        - name: id
+          in: path
+          description: Vault product id.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          $ref: "#/components/schemas/Vault"
+      summary: Get product in user vault
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-71
+    put:
+      tags:
+        - Vault
+      description: Update product in vault.
+      operationId: updateVault
+      parameters:
+        - name: id
+          in: path
+          description: Vault product id.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Vault"
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+      summary: Update product in user vault
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-71
+    delete:
+      tags:
+        - Vault
+      description: Remove in vault.
+      operationId: removeVault
+      parameters:
+        - name: id
+          in: path
+          description: Vault product id.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+      summary: Remove product in user vault
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-71
+  "/vault/{id}/start":
+    get:
+      tags:
+        - Vault
+      description: Start application for the product in vault. "Start Now" button.
+      operationId: applyProductInVault
+      parameters:
+        - name: id
+          in: path
+          description: Vault id.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+      summary: Start product application
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-72
+  "/product/{productId}":
+    get:
+      tags:
+        - Product
+      description: Get banking products available.
+      operationId: getProduct
+      parameters:
+        - name: productId
+          in: path
+          description: Product id.
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          $ref: "#/components/schemas/ProductDetail"
+      summary: Get banking products
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/113957be-7ed7-47b5-b73f-5ea40ed15467/All-users-65
+  "/phone/{phoneNumber}/resend":
+    post:
+      tags:
+        - Co-Applicant
+      description: Resend validation code to phone number.
+      operationId: resendPhoneCode
+      parameters:
+        - name: phoneNumber
+          in: path
+          description: Phone number of customer.
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            maximum: 10
+      requestBody:
+        $ref: "#/components/requestBodies/Registration"
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+      summary: Resend validation code
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/329e9aa9-2cfc-4fba-94bd-cdd21a293823/All-users-193
+  "/user/upload/frontImage":
+    post:
+      tags:
+        - User
+      summary: Uploads an image for front of id
+      operationId: uploadIdFrontImage
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                additionalMetadata:
+                  description: Additional data to pass to server
+                  type: string
+                file:
+                  description: file to upload
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/6b62bcb7-42a4-4dd8-96ab-b448a38c4ce3/All-users-85
+  "/user/upload/backImage":
+    post:
+      tags:
+        - User
+      summary: Uploads an image for back of id
+      operationId: uploadIdBackImage
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                additionalMetadata:
+                  description: Additional data to pass to server
+                  type: string
+                file:
+                  description: file to upload
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/6b62bcb7-42a4-4dd8-96ab-b448a38c4ce3/All-users-85
+  "/user/upload/selfie":
+    post:
+      tags:
+        - User
+      summary: Uploads a selfie image
+      operationId: uploadSelfie
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                additionalMetadata:
+                  description: Additional data to pass to server
+                  type: string
+                file:
+                  description: file to upload
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/399d7ad6-7556-435a-80ba-54143444d335/All-users-86
+  "/user/password":
+    put:
+      tags:
+        - User
+      summary: Set user password
+      description: Update user password
+      operationId: setPassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                newPassword:
+                  type: string
+        description: Password data
+        required: true
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+        "500":
+          $ref: "#/components/responses/Error"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/9794686e-9cce-45ac-b0d9-dacf9f40d91a/All-users-110
+  /user/existing:
+    post:
+      tags:
+        - User
+      summary: Check user email already existing
+      operationId: checkUserEmail
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+        description: User email address
+        required: true
+      responses:
+        "200":
+          description: Return boolean if credential exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  existing: 
+                    type: boolean
+        "500":
+          $ref: "#/components/responses/Error"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/a71469ec-1b66-470e-b0b2-d2c38ad39283/All-users-52
+  /user/register/passwordCriteria:
+    get:
+      tags:
+        - User
+      summary: Get password validity conditions
+      operationId: getPasswordCriteria
+      responses:
+        "200":
+          description: Return password validity conditions and regex to use
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  regex: 
+                    type: string
+                  conditions:
+                    type: array
+                    items:
+                      type: string
+                example: 
+                  regex: "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&]){8,}"
+                  conditions: [
+                    "Minimum 8 characters at least 1 Uppercase Alphabet",
+                    "1 Lowercase Alphabet"
                     ]
-                  }
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/be333698-9a63-4c53-801c-9bc57433a20f/All-users-194"
-        }
-      }
-    },
-    "/user/register": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "summary": "New registration",
-        "operationId": "registerUser",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email"
-                  },
-                  "phoneNumber": {
-                    "type": "integer"
-                  },
-                  "finCode": {
-                    "type": "integer"
-                  }
-                }
-              }
-            }
-          },
-          "description": "Registration info",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/Success"
-          }
-        },
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/a71469ec-1b66-470e-b0b2-d2c38ad39283/All-users-52"
-        }
-      }
-    },
-    "/user/confirm": {
-      "put": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Confirm terms and conditions",
-        "operationId": "confirmTermsAndConditions",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "offers": {
-                    "type": "boolean"
-                  }
-                }
-              }
-            }
-          },
-          "description": "Confirm registration",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/Success"
-          }
-        },
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/c867e2c2-03e0-4c92-95d7-aa5659a4c792/All-users-197"
-        }
-      }
-    },
-    "/user/login": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Logs User into the system",
-        "operationId": "loginUser",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Credential"
-              }
-            }
-          },
-          "description": "User credentials",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "token": {
-                      "type": "string"
-                    }
-                  },
-                  "example": {
-                    "id": "c1d0a583-fda3-4329-b3e8-3faefe804b9d",
-                    "token": "a6c00c43-155a-4389-ad4d-97536c5ef9cb"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/Error"
-          }
-        },
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/921119e7-e039-4912-ba8f-8d7c1d3c5774/All-users-51"
-        }
-      }
-    },
-    "/user/logout": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Logs out current logged in User session",
-        "operationId": "logoutUser",
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/Success"
-          }
-        }
-      }
-    },
-    "/user/account": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "summary": "User registration for FI membership",
-        "operationId": "applyMemberhip",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MemberBasicInfo"
-              }
-            }
-          },
-          "description": "Membership information",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Response will contain the applicantId assigned to the user.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "applicantId": {
-                      "type": "integer"
-                    },
-                    "applicantGuid": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "example": {
-                  "applicantId": 12345,
-                  "applicantGuid": "cb8d3365-4f19-4c0a-adbe-81055c634e53"
-                }
-              }
-            }
-          }
-        },
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/d78131bb-c284-4567-9f5a-fcda20160438/All-users-87"
-        }
-      },
-      "put": {
-        "tags": [
-          "User"
-        ],
-        "summary": "User registration for FI membership",
-        "operationId": "updateMembership",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MemberBasicInfo"
-              }
-            }
-          },
-          "description": "Membership information",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/Success"
-          }
-        },
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/d78131bb-c284-4567-9f5a-fcda20160438/All-users-87"
-        }
-      }
-    },
-    "/user/account/fund": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Fund account",
-        "operationId": "fundAccount",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "amount": {
-                    "type": "number"
-                  },
-                  "transferDate": {
-                    "type": "string",
-                    "format": "date"
-                  },
-                  "transferCode": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "description": "Paysafe will be used to transfer fund. The process is still TBD.",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/Success"
-          }
-        },
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/d78131bb-c284-4567-9f5a-fcda20160438/All-users-87"
-        }
-      }
-    },
-    "/user/account/payee": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Add account payee",
-        "operationId": "addPayee",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "payeeCode": {
-                    "type": "string"
-                  },
-                  "accountNumber": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "description": "Store selectable payee for the account",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/Success"
-          }
-        },
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/552e6b8c-c40a-42a1-b68e-4a502ba6f340/All-users-104"
-        }
-      }
-    },
-    "/user/account/verify": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Link user account to existing FI account",
-        "operationId": "verifyAccount",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "memberNumber": {
-                    "type": "string"
-                  },
-                  "accessCode": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "description": "If user is already registered on the current FI.",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/Success"
-          }
-        },
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/bb83a725-64e6-4e41-bca7-688837bc322f/All-users-184"
-        }
-      }
-    },
-    "/user/account/co-applicant": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Add co-applicant",
-        "operationId": "addCoApplicant",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "email": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "description": "Add co-applicant for the user",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/Success"
-          }
-        },
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/e59a7af0-4077-42c2-82b3-9ac6e1079e85/All-users-126"
-        }
-      }
-    },
-    "/user/account/transfer/deposit": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Transfer payroll direct deposit",
-        "operationId": "transferDeposit",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "employer": {
-                    "type": "string"
-                  },
-                  "employeeId": {
-                    "type": "string"
-                  },
-                  "payCycle": {
-                    "type": "string"
-                  },
-                  "region": {
-                    "type": "string"
-                  },
-                  "district": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "description": "Transfer payroll direct deposit",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/Success"
-          }
-        },
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/e68c01c8-a5a0-4bbc-9138-73240b9bad85/All-users-105"
-        }
-      }
-    },
-    "/user/account/transfer/payment": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Transfer pre-authorized payments",
-        "operationId": "transferPayment",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "employer": {
-                    "type": "string"
-                  },
-                  "employeeId": {
-                    "type": "string"
-                  },
-                  "payCycle": {
-                    "type": "string"
-                  },
-                  "region": {
-                    "type": "string"
-                  },
-                  "district": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "description": "Transfer payroll direct deposit",
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/Success"
-          }
-        },
-        "externalDocs": {
-          "description": "Wireframe page",
-          "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/e68c01c8-a5a0-4bbc-9138-73240b9bad85/All-users-105"
-        }
-      }
-    },
-    "/user": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Get User information",
-        "operationId": "getUserById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "The user id.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid username supplied"
-          },
-          "404": {
-            "description": "User not found"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Update user",
-        "description": "This can only be done by the logged in User.",
-        "operationId": "updateUser",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "User that need to be updated",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          },
-          "description": "Updated User object",
-          "required": true
-        },
-        "responses": {
-          "400": {
-            "description": "Invalid User supplied"
-          },
-          "404": {
-            "description": "User not found"
-          }
-        }
-      }
-    }
-  },
-  "security": [
-    {
-      "bearerAuth": [
-
-      ]
-    }
-  ],
-  "externalDocs": {
-    "description": "GUI Wireframe",
-    "url": "https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/"
-  },
-  "servers": [
-    {
-      "url": "https://dev.mobetize.com/smartOpen/1.1.0"
-    }
-  ],
-  "components": {
-    "responses": {
-      "Success": {
-        "description": "Success",
-        "headers": {
-          "X-Process-Id": {
-            "schema": {
-              "type": "string"
-            }
-          }
-        },
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ApiResponse"
-            }
-          }
-        }
-      },
-      "Error": {
-        "description": "Error",
-        "headers": {
-          "X-Process-Id": {
-            "schema": {
-              "type": "string"
-            }
-          }
-        },
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ApiResponse"
-            },
-            "example": {
-              "code": "99",
-              "message": "Error processing request"
-            }
-          }
-        }
-      }
-    },
-    "requestBodies": {
-      "Registration": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Registration"
-            }
-          }
-        },
-        "description": "Registration Id Code",
-        "required": true
-      }
-    },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      }
-    },
-    "schemas": {
-      "Branch": {
-        "type": "object",
-        "properties": {
-          "branchId": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "location": {
-            "type": "string"
-          }
-        },
-        "example": {
-          "branchId": "cdd21ddd-fe0c-4b0f-9a0a-91ab19e0915e",
-          "name": "Kingsway Branch",
-          "location": "Burnaby"
-        }
-      },
-      "Employer": {
-        "type": "object",
-        "properties": {
-          "employerId": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "location": {
-            "type": "string"
-          }
-        }
-      },
-      "Reference": {
-        "type": "object",
-        "description": "Generic object reference data",
-        "properties": {
-          "code": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          }
-        }
-      },
-      "Registration": {
-        "type": "object",
-        "properties": {
-          "registrationId": {
-            "type": "string"
-          },
-          "termsAccepted": {
-            "type": "boolean"
-          }
-        },
-        "example": {
-          "registrationId": "cdd21ddd-fe0c-4b0f-9a0a-91ab19e0915e",
-          "termsAccepted": true
-        }
-      },
-      "Credential": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          }
-        },
-        "example": {
-          "email": "egadalid@mobetize.com",
-          "password": "Mob3t1z3!"
-        }
-      },
-      "User": {
-        "type": "object",
-        "required": [
-          "name",
-          "email",
-          "phone"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "97e64ab0-8970-4eba-a5fd-8599af126761",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "example": "John Wick"
-          },
-          "email": {
-            "type": "string",
-            "example": "egadalid@mobetize.com",
-            "format": "email"
-          },
-          "phone": {
-            "type": "string",
-            "example": "7788773701"
-          },
-          "offers": {
-            "type": "boolean",
-            "description": "user opt for updates and special offers"
-          },
-          "applicantId": {
-            "type": "integer",
-            "example": "1234567890"
-          },
-          "applicantGuid": {
-            "type": "string",
-            "example": "83ddd6af-aa51-42cb-bd51-c47f9dc47dd2"
-          },
-          "userStatus": {
-            "type": "integer",
-            "format": "int32",
-            "description": "User Status",
-            "example": 1
-          }
-        }
-      },
-      "MemberBasicInfo": {
-        "type": "object",
-        "properties": {
-          "scanCode": {
-            "type": "string",
-            "description": "transaction id for scan processing"
-          },
-          "name": {
-            "type": "string"
-          },
-          "middleName": {
-            "type": "string"
-          },
-          "surName": {
-            "type": "string"
-          },
-          "dob": {
-            "type": "string",
-            "format": "date"
-          },
-          "scanInfoCorrect": {
-            "type": "boolean"
-          },
-          "address": {
-            "type": "string"
-          },
-          "city": {
-            "type": "string"
-          },
-          "province": {
-            "type": "string"
-          },
-          "postalCode": {
-            "type": "string"
-          },
-          "sameMailingAddress": {
-            "type": "boolean"
-          },
-          "isJoint": {
-            "type": "boolean"
-          },
-          "isOverdraftProtected": {
-            "type": "boolean"
-          },
-          "needDebitCard": {
-            "type": "boolean"
-          },
-          "onBehalfThirdParty": {
-            "type": "boolean"
-          },
-          "isPEP": {
-            "type": "boolean"
-          },
-          "isHOI": {
-            "type": "boolean"
-          },
-          "allowCreditCheck": {
-            "type": "boolean"
-          },
-          "sin": {
-            "type": "string"
-          },
-          "isResident": {
-            "type": "boolean"
-          },
-          "isResidentOther": {
-            "type": "boolean"
-          },
-          "acccountPurpose": {
-            "type": "string"
-          },
-          "employmentStatus": {
-            "type": "string"
-          },
-          "jobTitle": {
-            "type": "string"
-          },
-          "employerName": {
-            "type": "string"
-          },
-          "employerContactNo": {
-            "type": "string"
-          },
-          "grossIncome": {
-            "type": "string"
-          },
-          "sourceOfIncome": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "Application": {
-        "type": "object",
-        "required": [
-          "name",
-          "photoUrls"
-        ],
-        "properties": {
-          "userId": {
-            "type": "string"
-          },
-          "product": {
-            "$ref": "#/components/schemas/Product"
-          }
-        }
-      },
-      "Product": {
-        "type": "object",
-        "required": [
-          "productId",
-          "name"
-        ],
-        "properties": {
-          "productId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "shortDescription": {
-            "type": "string"
-          },
-          "categoryName": {
-            "type": "string"
-          },
-          "imageUrl": {
-            "type": "string"
-          },
-          "parentId": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
-      "Vault": {
-        "type": "object",
-        "properties": {
-          "vaultId": {
-            "type": "string"
-          },
-          "primaryName": {
-            "type": "string"
-          },
-          "coApplicantName": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "statusPrimary": {
-            "type": "string"
-          },
-          "statusCoApplicant": {
-            "type": "string"
-          },
-          "transitNo": {
-            "type": "string"
-          },
-          "institutionNo": {
-            "type": "string"
-          },
-          "accountNo": {
-            "type": "string"
-          },
-          "fund": {
-            "type": "number"
-          },
-          "progress": {
-            "minimum": 0,
-            "maximum": 100,
-            "type": "integer"
-          },
-          "progressCode": {
-            "type": "string",
-            "description": "Contains a code which will indicate what type of info is still needed"
-          },
-          "product": {
-            "$ref": "#/components/schemas/Product"
-          }
-        },
-        "example": {
-          "vaultId": "f157766a-6e43-4a13-9c53-93b72ea374f8",
-          "progress": 0,
-          "product": {
-            "productId": 9,
-            "name": "Personal Savings"
-          }
-        }
-      },
-      "ProductDetail": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Product"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "description": {
-                "type": "string"
-              }
-            }
-          }
-        ]
-      },
-      "ApiResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          }
-        },
-        "example": {
-          "code": "0",
-          "message": "Successfully processed"
-        }
-      }
-    }
-  }
-}
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/be333698-9a63-4c53-801c-9bc57433a20f/All-users-194
+  /user/register:
+    post:
+      tags:
+        - User
+      summary: New registration
+      operationId: registerUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                phoneNumber:
+                  type: integer
+                finCode:
+                  type: integer
+        description: Registration info
+        required: true
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/a71469ec-1b66-470e-b0b2-d2c38ad39283/All-users-52
+  "/user/confirm":
+    put:
+      tags:
+        - User
+      summary: Confirm terms and conditions
+      operationId: confirmTermsAndConditions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                offers: 
+                  type: boolean
+        description: Confirm registration
+        required: true
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/c867e2c2-03e0-4c92-95d7-aa5659a4c792/All-users-197
+  /user/login:
+    post:
+      tags:
+        - User
+      summary: Logs User into the system
+      operationId: loginUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Credential"
+        description: User credentials
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                  token:
+                    type: string
+                example:
+                  id: "c1d0a583-fda3-4329-b3e8-3faefe804b9d"
+                  token: "a6c00c43-155a-4389-ad4d-97536c5ef9cb"
+        "400":
+          $ref: "#/components/responses/Error"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/921119e7-e039-4912-ba8f-8d7c1d3c5774/All-users-51
+  /user/logout:
+    get:
+      tags:
+        - User
+      summary: Logs out current logged in User session
+      operationId: logoutUser
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+  "/user/account":
+    post:
+      tags:
+        - User
+      summary: User registration for FI membership
+      operationId: applyMemberhip
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Account"
+        description: Membership information
+        required: true
+      responses:
+        "200":
+          description: Response will contain the applicantId assigned to the user.
+          content:
+            application/json:
+              schema:
+                properties:
+                  applicantId:
+                    type: integer
+                  applicantGuid:
+                    type: string
+              example:
+                applicantId: 12345
+                applicantGuid: "cb8d3365-4f19-4c0a-adbe-81055c634e53"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/d78131bb-c284-4567-9f5a-fcda20160438/All-users-87
+    put:
+      tags:
+        - User
+      summary: User registration for FI membership
+      operationId: updateMembership
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Account"
+        description: Membership information
+        required: true
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/d78131bb-c284-4567-9f5a-fcda20160438/All-users-87
+  "/user/account/fund":
+    post:
+      tags:
+        - User
+      summary: Fund account
+      operationId: fundAccount
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                amount: 
+                  type: number
+                transferDate:
+                  type: string
+                  format: date
+                transferCode:
+                  type: string
+        description: Paysafe will be used to transfer fund. The process is still TBD.
+        required: true
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/d78131bb-c284-4567-9f5a-fcda20160438/All-users-87
+  "/user/account/payee":
+    post:
+      tags:
+        - User
+      summary: Add account payee
+      operationId: addPayee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                payeeCode: 
+                  type: string
+                accountNumber:
+                  type: string
+                name:
+                  type: string
+        description: Store selectable payee for the account
+        required: true
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/552e6b8c-c40a-42a1-b68e-4a502ba6f340/All-users-104
+  "/user/account/verify":
+    post:
+      tags:
+        - User
+      summary: Link user account to existing FI account
+      operationId: verifyAccount
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                memberNumber: 
+                  type: string
+                accessCode:
+                  type: string
+        description: If user is already registered on the current FI.
+        required: true
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/bb83a725-64e6-4e41-bca7-688837bc322f/All-users-184
+  "/user/account/co-applicant":
+    post:
+      tags:
+        - User
+      summary: Add co-applicant
+      operationId: addCoApplicant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                name: 
+                  type: string
+                email:
+                  type: string
+        description: Add co-applicant for the user
+        required: true
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/e59a7af0-4077-42c2-82b3-9ac6e1079e85/All-users-126
+  "/user/account/transfer/deposit":
+    post:
+      tags:
+        - User
+      summary: Transfer payroll direct deposit
+      operationId: transferDeposit
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                employer: 
+                  type: string
+                employeeId: 
+                  type: string
+                payCycle:
+                  type: string
+                region:
+                  type: string
+                district:
+                  type: string
+        description: Transfer payroll direct deposit
+        required: true
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/e68c01c8-a5a0-4bbc-9138-73240b9bad85/All-users-105
+  "/user/account/transfer/payment":
+    post:
+      tags:
+        - User
+      summary: Transfer pre-authorized payments
+      operationId: transferPayment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                employer: 
+                  type: string
+                employeeId: 
+                  type: string
+                payCycle:
+                  type: string
+                region:
+                  type: string
+                district:
+                  type: string
+        description: Transfer payroll direct deposit
+        required: true
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+      externalDocs:
+        description: Wireframe page
+        url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/e68c01c8-a5a0-4bbc-9138-73240b9bad85/All-users-105
+  "/user":
+    get:
+      tags:
+        - User
+      summary: Get User information
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          description: The user id.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Invalid username supplied
+        "404":
+          description: User not found
+    put:
+      tags:
+        - User
+      summary: Update user
+      description: This can only be done by the logged in User.
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          description: User that need to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+        description: Updated User object
+        required: true
+      responses:
+        "400":
+          description: Invalid User supplied
+        "404":
+          description: User not found
+security:
+  - bearerAuth: []
+externalDocs:
+  description: GUI Wireframe
+  url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/
+servers:
+  - url: https://dev.mobetize.com/smartOpen/1.1.0
+components:
+  responses:
+    Success:
+      description: Success
+      headers:
+        X-Process-Id:
+          schema:
+            type: string
+      content:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/ApiResponse"
+    Error:
+      description: Error
+      headers:
+        X-Process-Id:
+          schema:
+            type: string
+      content:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/ApiResponse"
+          example: 
+            code: "99"
+            message: "Error processing request"
+  requestBodies:
+    Registration:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Registration"
+      description: Registration Id Code
+      required: true
+  securitySchemes:
+    bearerAuth:            
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Branch:
+      type: object
+      properties:
+        branchId:
+          type: string
+        name:
+          type: string
+        location:
+          type: string
+      example:
+        branchId: cdd21ddd-fe0c-4b0f-9a0a-91ab19e0915e
+        name: Kingsway Branch
+        location: Burnaby
+    Employer:
+      type: object
+      properties:
+        employerId:
+          type: string
+        name:
+          type: string
+        location:
+          type: string
+    Reference:
+      type: object
+      description: Generic object reference data
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+    Registration:
+      type: object
+      properties:
+        registrationId:
+          type: string
+        termsAccepted:
+          type: boolean
+      example:
+        registrationId: cdd21ddd-fe0c-4b0f-9a0a-91ab19e0915e
+        termsAccepted: true
+    Credential:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        email: egadalid@mobetize.com
+        password: Mob3t1z3!
+    User:
+      type: object
+      required: 
+        - name
+        - email
+        - phone
+      properties:
+        id:
+          type: string
+          example: 97e64ab0-8970-4eba-a5fd-8599af126761
+          format: uuid
+        name:
+          type: string
+          example: John Wick
+        email:
+          type: string
+          example: egadalid@mobetize.com
+          format: email
+        phone:
+          type: string
+          example: "7788773701"
+        offers:
+          type: boolean
+          description: user opt for updates and special offers
+        applicantId:
+          type: integer
+          example: "1234567890"
+        applicantGuid:
+          type: string
+          example: 83ddd6af-aa51-42cb-bd51-c47f9dc47dd2
+        userStatus:
+          type: integer
+          format: int32
+          description: User Status
+          example: 1
+    Account:
+      type: object
+      properties:
+        scanCode:
+          type: string
+          description: transaction id for scan processing
+        name:
+          type: string
+        middleName:
+          type: string
+        surName:
+          type: string
+        dob:
+          type: string
+          format: date
+        scanInfoCorrect:
+          type: boolean
+        address:
+          type: string
+        city:
+          type: string
+        province: 
+          type: string
+        postalCode:
+          type: string
+        sameMailingAddress:
+          type: boolean
+        isJoint:
+          type: boolean
+        isOverdraftProtected:
+          type: boolean
+        needDebitCard:
+          type: boolean
+        onBehalfThirdParty:
+          type: boolean
+        isPEP:
+          type: boolean
+        isHOI:
+          type: boolean
+        allowCreditCheck:
+          type: boolean
+        sin:
+          type: string
+        isResident:
+          type: boolean
+        isResidentOther:
+          type: boolean
+        acccountPurpose:
+          type: string
+        employmentStatus:
+          type: string
+        jobTitle:
+          type: string
+        employerName:
+          type: string
+        employerContactNo:
+          type: string
+        grossIncome:
+          type: string
+        sourceOfIncome:
+          type: array
+          items:
+            type: string
+    Product:
+      type: object
+      required: 
+        - productId
+        - name
+      properties:
+        productId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        description:
+          type: string
+        shortDescription:
+          type: string
+        categoryName:
+          type: string
+        imageUrl:
+          type: string
+        parentId:
+          type: integer
+          format: int32
+    Vault:
+      type: object
+      properties:
+        vaultId:
+          type: string
+        primaryName:
+          type: string
+        coApplicantName:
+          type: string
+        status:
+          type: string
+        statusPrimary:
+          type: string
+        statusCoApplicant:
+          type: string
+        transitNo:
+          type: string
+        institutionNo:
+          type: string
+        accountNo:
+          type: string
+        fund:
+          type: number
+        progress:
+          minimum: 0
+          maximum: 100
+          type: integer
+        progressCode:
+          type: string
+          description: Contains a code which will indicate what type of info is still needed
+        product:
+          $ref: "#/components/schemas/Product"
+      example:
+        vaultId: "f157766a-6e43-4a13-9c53-93b72ea374f8"
+        progress: 0
+        product:
+          productId: 9
+          name: Personal Savings
+    ProductDetail:
+      allOf:
+        - $ref: "#/components/schemas/Product"
+        - type: object
+          properties:
+            description:
+              type: string
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      example:
+        code: "0"
+        message: "Successfully processed"
