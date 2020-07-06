@@ -583,41 +583,6 @@ paths:
       externalDocs:
         description: Wireframe page
         url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/329e9aa9-2cfc-4fba-94bd-cdd21a293823/All-users-193
-  /application:
-    post:
-      tags:
-        - Application
-      summary: Add a new application
-      operationId: addApplication
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Application"
-        description: User application information
-        required: true
-      responses:
-        "405":
-          description: Invalid input
-    put:
-      tags:
-        - Application
-      summary: Update an existing Application
-      operationId: updateApplication
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Application"
-        description: Update to user application
-        required: true
-      responses:
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: Application not found
-        "405":
-          description: Registration exception
   "/user/upload/frontImage":
     post:
       tags:
@@ -643,7 +608,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MemberBasicInfo"
+                $ref: "#/components/schemas/Account"
       externalDocs:
         description: Wireframe page
         url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/6b62bcb7-42a4-4dd8-96ab-b448a38c4ce3/All-users-85
@@ -672,7 +637,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MemberBasicInfo"
+                $ref: "#/components/schemas/Account"
       externalDocs:
         description: Wireframe page
         url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/6b62bcb7-42a4-4dd8-96ab-b448a38c4ce3/All-users-85
@@ -701,7 +666,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MemberBasicInfo"
+                $ref: "#/components/schemas/Account"
       externalDocs:
         description: Wireframe page
         url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/399d7ad6-7556-435a-80ba-54143444d335/All-users-86
@@ -891,7 +856,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/MemberBasicInfo"
+              $ref: "#/components/schemas/Account"
         description: Membership information
         required: true
       responses:
@@ -920,7 +885,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/MemberBasicInfo"
+              $ref: "#/components/schemas/Account"
         description: Membership information
         required: true
       responses:
@@ -1264,7 +1229,7 @@ components:
           format: int32
           description: User Status
           example: 1
-    MemberBasicInfo:
+    Account:
       type: object
       properties:
         scanCode:
@@ -1327,16 +1292,6 @@ components:
           type: array
           items:
             type: string
-    Application:
-      type: object
-      required:
-        - name
-        - photoUrls
-      properties:
-        userId:
-          type: string
-        product:
-          $ref: "#/components/schemas/Product"
     Product:
       type: object
       required: 
