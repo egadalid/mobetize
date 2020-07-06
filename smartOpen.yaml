@@ -555,7 +555,7 @@ paths:
             format: int32
       responses:
         "200":
-          $ref: "#/components/schemas/ProductDetail"
+          $ref: "#/components/schemas/Product"
       summary: Get banking products
       externalDocs:
         description: Wireframe page
@@ -1375,13 +1375,6 @@ components:
         product:
           productId: 9
           name: Personal Savings
-    ProductDetail:
-      allOf:
-        - $ref: "#/components/schemas/Product"
-        - type: object
-          properties:
-            description:
-              type: string
     ApiResponse:
       type: object
       properties:
