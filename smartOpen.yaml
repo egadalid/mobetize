@@ -861,7 +861,7 @@ paths:
         description: Wireframe page
         url: https://xd.adobe.com/view/236f62ce-a4f0-4217-bace-2008d12d5e6d-763c/screen/921119e7-e039-4912-ba8f-8d7c1d3c5774/All-users-51
   /user/logout:
-    get:
+    post:
       tags:
         - User
       summary: Logs out current logged in User session
