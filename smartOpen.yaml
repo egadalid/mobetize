@@ -520,7 +520,7 @@ paths:
         description: Wireframe page
         url: https://xd.adobe.com/view/899ba896-3e8f-4e20-9ba5-3807988bbe3a-dcc8/screen/9a3f4d52-53fc-4c44-8d7d-100c9f855b72/All-users-71
   "/vault/{id}/start":
-    get:
+    post:
       tags:
         - Vault
       description: Start application for the product in vault. "Start Now" button.
