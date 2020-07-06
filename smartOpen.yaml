@@ -14,7 +14,7 @@ tags:
     description: Co-Applicant registration process
     externalDocs:
       description: Find out more
-      url: shorturl.at/cjIXY
+      url: http://shorturl.at/cjIXY
   - name: User
     description: Operations for smartOpen user.
   - name: Product
